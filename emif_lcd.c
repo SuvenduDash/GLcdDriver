@@ -29,3 +29,9 @@ static dev_t lcd_devt;
 struct cdev *lcddev ;
 struct class *lcd_class;
 struct device *mydevice;
+static const struct file_operations lcd_dev_fops = {
+        .owner          = THIS_MODULE,
+        .unlocked_ioctl = lcd_dev_ioctl,
+        .open           = lcd_dev_open,
+        .write          = lcd_dev_write,
+};
