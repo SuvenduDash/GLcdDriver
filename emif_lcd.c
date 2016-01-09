@@ -35,3 +35,77 @@ static const struct file_operations lcd_dev_fops = {
         .open           = lcd_dev_open,
         .write          = lcd_dev_write,
 };
+
+static int __init wg128x64_probe(struct platform_device *pdev)
+{
+        struct resource *res, *mem;
+        int err;
+        printk("Before Platform_get_resource\n");
+        res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+        printk("After platform_get_resources\n");
+        if (!res) {
+                pr_debug("%s: Lcd resource data missing\n", pdev->name);
+                printk("Lcd resource data missing\n");
+                return -ENOENT;
+        }
+        printk("Before request_mem_region\n");
+        mem = request_mem_region(res->start, resource_size(res), pdev->name);
+        printk("After request_mem_region\n");
+        if (!mem) {
+                pr_debug("%s: LCD registers are not free\n",
+                                 pdev->name);
+                printk("Lcd registers are not free\n");
+                return -EBUSY;
+        }
+        printk("before emif_init\n");
+        emif_init(res->start);
+        printk("after emif_init\n");
+        /*Create a struct class structure*/
+#if 1
+        lcd_class = class_create(THIS_MODULE, DEV_NAME);
+        printk("after class_creae\n");
+        if (IS_ERR(lcd_class)) {
+                printk(KERN_ERR "%s: couldn't create class\n", __FILE__);
+                printk("Couldn't create class\n");
+                return PTR_ERR(lcd_class);
+ }
+        /*allocate a cdev structure*/
+        printk("before cdev_allc\n");
+        lcddev = cdev_alloc();
+        printk("after cdev_allc\n");
+        err = alloc_chrdev_region(&lcd_devt, 0, 1, DEV_NAME);
+        printk("after alloc_chrdev_region\n");
+        if (err < 0)
+        {
+                printk(KERN_ERR "%s: failed to allocate char dev region\n",
+                           __FILE__);
+                printk("failed to allocate char dev region\n");
+         }
+         /*create a class device and register with sysfs*/
+         printk("before device_create\n");
+         mydevice=device_create(lcd_class,NULL, lcd_devt,NULL,DEV_NAME);
+         printk("after device_create\n");
+         if(mydevice == NULL)
+         {
+                printk("before class_destroy\n");
+                class_destroy(lcd_class);
+                printk("after class_destroy\n");
+                unregister_chrdev_region(lcd_devt,1);
+                printk("after unregister\n");
+
+         }
+         printk("before cdev_init\n");
+         cdev_init(lcddev,&lcd_dev_fops);
+         printk("after cdev_init\n");
+         lcddev->owner = THIS_MODULE;
+         printk("before cdev_add");
+         cdev_add(lcddev, lcd_devt, 1);
+         printk("after cdev_add\n");
+#endif
+         /*Write the code here for boot up display*/
+        // register_chrdev(89,DEV_NAME,&lcd_dev_fops);
+         printk("before Lcd_init\n");
+         Lcd_initialize();
+ printk("after Lcd_init\n");
+        return(0);
+}
