@@ -109,3 +109,25 @@ static int __init wg128x64_probe(struct platform_device *pdev)
  printk("after Lcd_init\n");
         return(0);
 }
+static long lcd_dev_open(struct inode *inode, struct file *file)
+{
+  printk("Device opened sucessfully\n");
+  return(0);
+}
+ssize_t lcd_dev_write(struct file *filp,const char *buf,size_t count,loff_t *offset)
+{
+  printk("lcd_dev_write func\n");
+  int ret;
+  char msg[1024];
+  ret = copy_from_user(msg, buf, count);
+  msg[count] = '\0';
+  LCD_writeByte( LCD_INST_REG,AutoModeWrite);
+  {
+       LCD_writeString(msg, count, DELAY_200_MS);
+       //printf("...loop forever with LCD running...\r\n");
+  }
+  LCD_writeByte(LCD_INST_REG, AutoModeReset );
+  printk("Exit lcd_dev_write\n");
+  printk("ret value = %d\n",ret);
+  return(ret);
+}
