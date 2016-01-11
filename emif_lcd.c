@@ -131,3 +131,129 @@ ssize_t lcd_dev_write(struct file *filp,const char *buf,size_t count,loff_t *off
   printk("ret value = %d\n",ret);
   return(ret);
 }
+static long lcd_dev_ioctl(struct file *file,unsigned int cmd, unsigned long arg)
+{
+        switch(cmd)
+        {
+                case DEV_OR_MODE :
+                        LCD_writeByte( LCD_INST_REG,H_OR_MODE);
+                        //printk("OR_MODE case executed\n");
+                        break;
+                case DEV_XOR_MODE:
+                        LCD_writeByte( LCD_INST_REG,H_XOR_MODE);
+                        //printk("XOR_MODE case executed\n");
+                        break;
+                case DEV_AND_MODE:
+                        LCD_writeByte( LCD_INST_REG,H_AND_MODE);
+                        //printk("AND_MODE case executed\n");
+                        break;
+                case DEV_DIS_OFF:
+ LCD_writeByte( LCD_INST_REG,H_DIS_OFF);//DISPLAY OFF
+                        //printk("DIS_OFF case executed\n");
+                        break;
+                case DEV_CUR_ON_BLINK_OFF:
+                        LCD_writeByte( LCD_INST_REG,H_CUR_ON_BLINK_OFF);
+                        //printk("CUR_ON_BLINK_OFF case executed\n");
+                        break;
+                case DEV_CUR_ON_BLINK_ON:
+                        LCD_writeByte( LCD_INST_REG,H_CUR_ON_BLINK_ON);
+                        //printk("CUR_ON_BLINK_ON case executed\n");
+                        break;
+                case DEV_CUR_WITH_TXT_ON_GRA_OFF:
+                        LCD_writeByte( LCD_INST_REG,H_CUR_WITH_TXT_ON_GRA_OFF);
+                        //printk("CUR_WITH_TXT_ON_GRA_OFF case executed\n");
+                        break;
+                case DEV_TXT_ON_GRA_OFF:
+                        LCD_writeByte( LCD_INST_REG,H_TXT_ON_GRA_OFF);
+                        //printk("TXT_ON_GRA_OFF case executed\n");
+                        break;
+                case DEV_TXT_OFF_GRA_ON:
+                        LCD_writeByte( LCD_INST_REG,H_TXT_OFF_GRA_ON);
+                        //printk("TXT_OFF_GRA_ON case executed\n");
+                        break;
+                case DEV_TXT_ON_GRA_ON:
+                        LCD_writeByte( LCD_INST_REG,H_TXT_ON_GRA_ON);
+                        //printk("TXT_ON_GRA_ON case executed\n");
+                        break;
+                case DEV_SET_CUR_PTR:
+                        LCD_writeByte( LCD_INST_REG,H_SET_CUR_PTR);
+                        //printk("SET_CUR_PTR case executed\n");
+                        break;
+                case DEV_SET_ADD_PTR:
+                        LCD_writeByte( LCD_INST_REG,H_SET_ADD_PTR);
+                        //printk("SET_ADD_PTR case executed\n");
+                        break;
+                case DEV_TXT_HOME_ADD:
+                        LCD_writeByte( LCD_INST_REG,H_TXT_HOME_ADD);
+                        //printk("TXT_HOME_ADD case executed\n");
+                        break;
+                case DEV_TXT_AREA:
+                        LCD_writeByte( LCD_INST_REG,H_TXT_AREA);
+                        //printk("TXT_AREA case executed\n");
+ break;
+                case DEV_GRA_HOME_ADD:
+                        LCD_GRAPH_Home();
+                        //printk("GRA_HOME_ADD case executed\n");
+                        break;
+                case DEV_GRA_AREA:
+                        LCD_GRAPH_Area();
+                        //printk("GRA_AREA case executed\n");
+                        break;
+                case DEV_SET_HOME_ADDR:
+                        LCD_TextHome();
+                        //printk("LCD_TextHome case executed\n");
+                        break;
+                case DEV_SET_HOME_AREA:
+                        LCD_TextArea();
+                        //printk("LCD_TextArea case executed\n");
+                        break;
+                case DEV_AUTOMODEWRITE:
+                        LCD_writeByte( LCD_INST_REG,H_AUTOMODEWRITE);
+                        //printf("DEV_AUTOMODEWRITE case executed\n");
+                        break;
+                case DEV_AUTOMODERESET:
+                        LCD_writeByte( LCD_INST_REG,H_AUTOMODERESET);
+                        //printk("DEV_AUTOMODERESET case executed\n");
+                        break;
+                case DEV_CURSOR_OFF://T MUST CHECK NOW
+                        LCD_writeByte( LCD_INST_REG,0X18);
+                        LCD_writeByte( LCD_INST_REG,0X00);
+                        //printk("DEV_CURSOR_OFF case executed\n");
+                        break;
+                case DEV_GRA_HOME_LENGTH:
+                        LCD_writeByte( LCD_INST_REG,H_GRA_HOME_ADD);
+                        //printk("DEV_GRA_HOME_LENGTH case executed\n");
+                        break;
+                case DEV_GRA_AREA_LENGTH:
+                        LCD_writeByte( LCD_INST_REG,H_GRA_AREA);
+                        //printk("DEV_GRA_AREA_LENGTH case executed\n");
+                        break;
+                case DEV_GRA_AREA_16:
+                        LCD_writeByte(LCD_DATA_REG,0x10);
+                        LCD_writeByte(LCD_DATA_REG,0x00);
+						//printk("DEV_GRA_AREA_16 case executed\n");
+                        break;
+                case DEV_TXT_AREA_16:
+                        LCD_writeByte(LCD_DATA_REG,0x10);
+                        LCD_writeByte(LCD_DATA_REG,0x00);
+                        //printk("DEV_TXT_AREA_16 case executed\n");
+                        break;
+                case DEV_FONT_CHANGE_16:
+                        LCD_font_Change_16();
+                        //printk("FONT_CHANGE_16 case executed\n");
+                        break;
+                case DEV_FONT_CHANGE_21:
+                        LCD_font_Change_21();
+                        printk("FONT_CHANGE_21 case executed\n");
+                        break;
+                case DEV_SET_HOME_ADDR_8_8:
+                        LCD_writeByte(LCD_DATA_REG,0x00);
+                        LCD_writeByte(LCD_DATA_REG,0x40);
+                        //printk("DEV_SET_HOME_ADDR_8_8 case executed\n");
+                        break;
+                default:
+                        return(ENOSYS);
+        }
+       return(0);
+
+}
