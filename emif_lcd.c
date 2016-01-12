@@ -257,3 +257,38 @@ static long lcd_dev_ioctl(struct file *file,unsigned int cmd, unsigned long arg)
        return(0);
 
 }
+static struct platform_driver wg128x64_platform_driver = {
+        //.remove               = __exit_p(wg128x64_remove), /*take care of cleaning*/
+        .driver = {
+                .name = DRV_NAME,
+                .owner = THIS_MODULE,
+        },
+        .probe = wg128x64_probe,
+};
+
+
+static int __init emif_lcd_init()
+{
+        //return platform_driver_probe(&wg128x64_platform_driver, wg128x64_probe);
+        return platform_driver_register(&wg128x64_platform_driver);
+}
+
+static int __exit emif_lcd_exit()
+{
+ #if 0
+        cdev_del(lcddev);
+        device_destroy(lcd_class, lcd_devt);
+        class_destroy(lcd_class);
+        unregister_chrdev_region(lcd_devt, 1);
+#endif
+        unregister_chrdev(89, DEV_NAME);
+        printk("\n Bye");
+        return(0);
+}
+
+module_init(emif_lcd_init);
+module_exit(emif_lcd_exit);
+
+MODULE_DESCRIPTION("FPRO driver for winstar WG128X64 LCD interface with EMIF BUS");
+MODULE_AUTHOR("Suvendu Kumar Dash");
+MODULE_LICENSE("GPL");
